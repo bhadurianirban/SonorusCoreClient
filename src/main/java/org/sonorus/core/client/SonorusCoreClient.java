@@ -14,9 +14,11 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import org.hedwig.cloud.dto.HedwigConstants;
 import org.sonorus.core.dto.SonorusDTO;
-import org.sonorus.core.dto.SpeechServicePaths;
+import org.sonorus.core.dto.SonorusServicePaths;
 import org.hedwig.cloud.response.HedwigResponseCode;
+import org.patronus.constants.PatronusServicePaths;
 
 /**
  *
@@ -26,8 +28,13 @@ public class SonorusCoreClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = SpeechServicePaths.DGRF_SPEECH_BASE_URI+"/"+SpeechServicePaths.DGRF_SPEECH_BASE;
-
+    private String BASE_URI;
+    public SonorusCoreClient() {
+        BASE_URI =  HedwigConstants.createConnectionUrl(SonorusServicePaths.SONORUS_SERVER,SonorusServicePaths.SONORUS_PORT,SonorusServicePaths.SONORUS_BASE_URI);
+    }
+    public SonorusCoreClient(String server,String serverPort) {
+        BASE_URI =  HedwigConstants.createConnectionUrl(server,serverPort,PatronusServicePaths.PATRONUS_BASE_URI);
+    }
     private SonorusDTO callDGRFSpeechService(SonorusDTO dGRFSpeechDTO) {
         WebTarget resource = webTarget;
         ObjectMapper objectMapper = new ObjectMapper();
@@ -58,19 +65,19 @@ public class SonorusCoreClient {
 
     public SonorusDTO convertWavToCsv(SonorusDTO dGRFSpeechDTO) {
         client = javax.ws.rs.client.ClientBuilder.newClient();
-        webTarget = client.target(BASE_URI).path(SpeechServicePaths.WAV_TO_CSV_AND_UPLOAD);
+        webTarget = client.target(BASE_URI).path(SonorusServicePaths.WAV_TO_CSV_AND_UPLOAD);
         return callDGRFSpeechService(dGRFSpeechDTO);
     }
 
     public SonorusDTO calculateSpeechEmotion(SonorusDTO dGRFSpeechDTO) {
         client = javax.ws.rs.client.ClientBuilder.newClient();
-        webTarget = client.target(BASE_URI).path(SpeechServicePaths.DECIDE_SPEECH_EMO);
+        webTarget = client.target(BASE_URI).path(SonorusServicePaths.DECIDE_SPEECH_EMO);
         return callDGRFSpeechService(dGRFSpeechDTO);
     }
     
     public SonorusDTO deleteEmoInstance(SonorusDTO dGRFSpeechDTO) {
         client = javax.ws.rs.client.ClientBuilder.newClient();
-        webTarget = client.target(BASE_URI).path(SpeechServicePaths.DELETE_SPEECH_EMO);
+        webTarget = client.target(BASE_URI).path(SonorusServicePaths.DELETE_SPEECH_EMO);
         return callDGRFSpeechService(dGRFSpeechDTO);
     }
 }
